@@ -1,0 +1,1 @@
+<html> <title>しらとり</title> <head> </head> <body bgcolor="#CCCCCC"> <p align="center" style="font-size: 100px;">テスト</p> <p><img src="仮しらとり.jpg" width="%" /p> </body> </html>

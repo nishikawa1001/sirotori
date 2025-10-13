@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マップに現在地表示</title>
+  <style>
+    canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="mapCanvas" width="800" height="600"></canvas>
+
+  <script>
+    const canvas = document.getElementById("mapCanvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.src = "園内マップ.jpg"; // 画像パスを正しく設定してね！
+
+    // 仮のマップ座標範囲（緯度経度）
+    const mapBounds = {
+      latMin: 35.1251392,
+      latMax: 36.0,
+      lonMin: 136.0,
+      lonMax: 137.0
+    };
+
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      navigator.geolocation.watchPosition((position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const { x, y } = convertLatLonToXY(lat, lon, mapBounds, canvas);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        drawMarker(x, y);
+      });
+    };
+
+    function convertLatLonToXY(lat, lon, mapBounds, canvasSize) {
+      const { latMin, latMax, lonMin, lonMax } = mapBounds;
+      const x = ((lon - lonMin) / (lonMax - lonMin)) * canvasSize.width;
+      const y = ((latMax - lat) / (latMax - latMin)) * canvasSize.height;
+      return { x, y };
+    }
+
+    function drawMarker(x, y) {
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = "red";
+      ctx.fill();
+    }
+  </script>
+</body>
+</html>
