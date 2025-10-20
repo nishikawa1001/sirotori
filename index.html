@@ -61,6 +61,8 @@
 .map-wrapper { 
     position: relative;
     display: inline-block;
+    width: fit-content;
+    height: fit-content;
 }
 
 @keyframes pulse {
@@ -101,30 +103,32 @@ function repositionStars() {
     }
   });
 
-  const rect = mapImage.getBoundingClientRect();
+  //  ここから星の位置を計算して配置！
+  const displayedWidth = mapImage.clientWidth;
+  const displayedHeight = mapImage.clientHeight;
 
- starPositions.forEach(pos => {
-  const link = document.createElement('a');
-  link.href = pos.url;
-  link.target = '_blank'; // 新しいタブで開く
+  starPositions.forEach(pos => {
+    const x = displayedWidth * pos.xPercent / 100;
+    const y = displayedHeight * pos.yPercent / 100;
 
-  const star = document.createElement('img');
-  star.src = '星印.png';
-  star.className = 'star-image';
+    const link = document.createElement('a');
+    link.href = pos.url;
+    link.target = '_blank';
 
-  const x = rect.width * pos.xPercent / 100;
-  const y = rect.height * pos.yPercent / 100;
+    const star = document.createElement('img');
+    star.src = '星印.png';
+    star.className = 'star-image';
 
-  link.style.position = 'absolute';
-  link.style.left = `${x}px`;
-  link.style.top = `${y}px`;
-  link.style.transform = 'translate(-50%, -50%)';
-  link.style.zIndex = '1000';
+    link.style.position = 'absolute';
+    link.style.left = `${x}px`;
+    link.style.top = `${y}px`;
+    link.style.transform = 'translate(-50%, -50%)';
+    link.style.zIndex = '1000';
 
-  link.appendChild(star);
-  wrapper.appendChild(link);
- });
-}z
+    link.appendChild(star);
+    wrapper.appendChild(link);
+  });
+}
 
 //  拡大表示されたときに星を表示
 function showOverlay() {
