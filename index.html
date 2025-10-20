@@ -58,6 +58,11 @@
     z-index: 1000;
   }
 
+.map-wrapper { 
+    position: relative;
+    display: inline-block;
+}
+
 @keyframes pulse {
     0%   { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
     50%  { transform: translate(-50%, -50%) scale(1.5); opacity: 0.7; }
@@ -77,25 +82,23 @@
 
 //  星の座標データ（画像の中のパーセンテージで指定）
 const starPositions = [
-  { xPercent: 75, yPercent: 70, url: 'https://www.lixil.co.jp/catalog/'  },
-  { xPercent: 35, yPercent: 35, url: 'https://www.lixil.co.jp/catalog/'  },
-  { xPercent: 55, yPercent: 50, url: 'https://www.lixil.co.jp/catalog/'  },
-  { xPercent: 55, yPercent: 15, url: 'https://abehiroshi.la.coocan.jp/'  },
-  { xPercent: 45, yPercent: 85, url: 'https://www.nicovideo.jp/'  },
+  { xPercent: 75.5, yPercent: 70, url: 'https://www.lixil.co.jp/catalog/'  },
+  { xPercent: 35, yPercent: 38, url: 'https://www.lixil.co.jp/catalog/'  },
+  { xPercent: 56.5, yPercent: 51, url: 'https://www.lixil.co.jp/catalog/'  },
+  { xPercent: 55, yPercent: 20, url: 'https://abehiroshi.la.coocan.jp/'  },
+  { xPercent: 46, yPercent: 82, url: 'https://www.nicovideo.jp/'  },
 ];
 
 //  星を再配置する関数（画像サイズに合わせて計算）
 function repositionStars() {
-  const mapImage = document.getElementById('map-image-large');
+  const wrapper = document.querySelector('.map-wrapper');
 
   // 既存の星を削除
-  document.querySelectorAll('.star-image').forEach(star => {
-  if (star.parentElement) {
-    star.parentElement.remove();
-  }
- });
-
-  const rect = mapImage.getBoundingClientRect();
+  wrapper.querySelectorAll('.star-image').forEach(star => {
+    if (star.parentElement) {
+      star.parentElement.remove();
+    }
+  });
 
  starPositions.forEach(pos => {
   const link = document.createElement('a');
@@ -106,12 +109,9 @@ function repositionStars() {
   star.src = '星印.png';
   star.className = 'star-image';
 
-  const x = rect.left + rect.width * pos.xPercent / 100;
-  const y = rect.top + rect.height * pos.yPercent / 100;
-
-  link.style.position = 'fixed';
-  link.style.left = `${x}px`;
-  link.style.top = `${y}px`;
+  link.style.position = 'absolute';
+  link.style.left = `${pos.xPercent}%`;
+  link.style.top = `${pos.yPercent}%`;
   link.style.transform = 'translate(-50%, -50%)';
   link.style.zIndex = '1000';
 
@@ -124,6 +124,9 @@ function repositionStars() {
 function showOverlay() {
   const overlay = document.getElementById('overlay');
   overlay.style.display = 'flex';
+
+  // スクロールを止める
+  document.body.style.overflow = 'hidden';
 
   const mapImage = document.getElementById('map-image-large');
 
@@ -194,7 +197,9 @@ function hideOverlay() {
 
 <!-- 拡大表示用のオーバーレイ -->
 <div class="overlay" id="overlay" onclick="hideOverlay()">
-  <img src="園内マップ.jpg" alt="拡大園内マップ" id="map-image-large">
+　<div class="map-wrapper">
+ 　 <img src="園内マップ.jpg" alt="拡大園内マップ" id="map-image-large">
+　</div>
 </div>
 
 </body> 
