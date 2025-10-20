@@ -37,6 +37,7 @@
       max-width: 90vw;
       max-height: 90vh;
       object-fit: contain;
+      border: 4px solid white;
       border-radius: 12px;
     }
 
@@ -47,7 +48,6 @@
       transform: translate(-50%, -50%);
       animation: pulse 1.5s infinite;
       z-index: 1000;
-      transform-origin: center;
     }
 
     @keyframes pulse {
@@ -87,56 +87,39 @@
     }
 
     function repositionStars() {
-  const mapImage = document.getElementById('map-image-large');
+      const mapImage = document.getElementById('map-image-large');
 
-  // 既存の星を削除
-  document.querySelectorAll('.star-image').forEach(star => {
-    if (star.parentElement) {
-      star.parentElement.remove();
+      // 既存の星を削除
+      document.querySelectorAll('.star-image').forEach(star => {
+        if (star.parentElement) {
+          star.parentElement.remove();
+        }
+      });
+
+      const rect = mapImage.getBoundingClientRect();
+
+      starPositions.forEach(pos => {
+        const link = document.createElement('a');
+        link.href = pos.url;
+        link.target = '_blank';
+
+        const star = document.createElement('img');
+        star.src = '星印.png';
+        star.className = 'star-image';
+
+        const x = rect.left + rect.width * pos.xPercent / 100;
+        const y = rect.top + rect.height * pos.yPercent / 100;
+
+        link.style.position = 'fixed';
+        link.style.left = `${x}px`;
+        link.style.top = `${y}px`;
+        link.style.transform = 'translate(-50%, -50%)';
+        link.style.zIndex = '1000';
+
+        link.appendChild(star);
+        document.body.appendChild(link);
+      });
     }
-  });
-
-  const wrapper = document.getElementById('map-wrapper');
-  const rect = wrapper.getBoundingClientRect();
-
-  starPositions.forEach(pos => {
-    const link = document.createElement('a');
-    link.href = pos.url;
-    link.target = '_blank';
-
-    const star = document.createElement('img');
-    star.src = '星印.png';
-    star.className = 'star-image';
-
-    const x = rect.left + rect.width * pos.xPercent / 100;
-    const y = rect.top + rect.height * pos.yPercent / 100;
-
-    link.style.position = 'fixed';
-    link.style.left = `${x}px`;
-    link.style.top = `${y}px`;
-    link.style.transform = 'translate(-50%, -50%)';
-    link.style.zIndex = '1000';
-
-    link.appendChild(star);
-    wrapper.appendChild(link);
-  });
-}
-
-// 画面サイズが変わったときにも再配置
-window.addEventListener('resize', () => {
-  const overlay = document.getElementById('overlay');
-  if (overlay.style.display === 'flex') {
-    repositionStars();
-  }
-});
-
-// 画面の向きが変わったときにも再配置（スマホ・タブレット対応）
-window.addEventListener('orientationchange', () => {
-  const overlay = document.getElementById('overlay');
-  if (overlay.style.display === 'flex') {
-    repositionStars();
-  }
-});
   </script>
 </head>
 
@@ -154,9 +137,6 @@ window.addEventListener('orientationchange', () => {
   </div>
 
   <div class="overlay" id="overlay" onclick="hideOverlay()">
-   <div id="map-wrapper" style="position: relative;">
     <img src="園内マップ.jpg" alt="拡大園内マップ" id="map-image-large">
-   </div>
   </div>
 </body>
-</html>
